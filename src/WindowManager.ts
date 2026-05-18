@@ -69,8 +69,7 @@ export class WindowManager {
             this.apiClient,
             this.logger
         );
-        manageServers.window.set_transient_for(parent);
-        manageServers.present();
+        manageServers.present(parent);
     }
     showAbout(parent: Gtk.Window) {
         this.logger.debug('Opening About window');

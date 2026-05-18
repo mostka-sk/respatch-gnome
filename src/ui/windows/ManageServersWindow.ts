@@ -8,7 +8,7 @@ import { AddProjectDialog } from '../dialogs/AddProjectDialog.js';
 import { Project } from '../../models/Project.js';
 
 export class ManageServersWindow {
-    public window: Adw.PreferencesWindow;
+    public window: Adw.PreferencesDialog;
     private serversGroup: Adw.PreferencesGroup;
     private _rows: Gtk.Widget[] = [];
 
@@ -21,7 +21,7 @@ export class ManageServersWindow {
         const builder = new Gtk.Builder();
         builder.add_from_file(`${uiDir}/ui/manage_servers.ui`);
 
-        this.window = builder.get_object('manage_servers_window') as Adw.PreferencesWindow;
+        this.window = builder.get_object('manage_servers_window') as Adw.PreferencesDialog;
         this.serversGroup = builder.get_object('servers_group') as Adw.PreferencesGroup;
 
         const addServerBtn = builder.get_object('add_server_button') as Gtk.Button;
@@ -98,7 +98,11 @@ export class ManageServersWindow {
         dialog.present();
     }
 
-    present() {
-        this.window.present();
+    present(parent?: Gtk.Widget) {
+        if (parent) {
+            this.window.present(parent);
+        } else {
+            this.window.present(null);
+        }
     }
 }

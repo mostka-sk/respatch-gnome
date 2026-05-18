@@ -8,7 +8,7 @@ import { LoggerService } from '../../services/LoggerService.js';
 import { Project } from '../../models/Project.js';
 
 export class AddProjectDialog {
-    private dialog: Adw.Window;
+    private dialog: Adw.Dialog;
     private state: 'verify' | 'add' | 'error' = 'verify';
     private existingProject?: Project;
     
@@ -19,7 +19,7 @@ export class AddProjectDialog {
     private toastOverlay: Adw.ToastOverlay;
 
     constructor(
-        parent: Gtk.Window,
+        private parentWidget: Gtk.Widget,
         uiDir: string,
         private apiClient: ApiClient,
         private store: ProjectStore,
@@ -31,8 +31,7 @@ export class AddProjectDialog {
         const builder = new Gtk.Builder();
         builder.add_from_file(`${uiDir}/ui/add_project_dialog.ui`);
 
-        this.dialog = builder.get_object('add_project_dialog') as Adw.Window;
-        this.dialog.set_transient_for(parent);
+        this.dialog = builder.get_object('add_project_dialog') as Adw.Dialog;
 
         this.nameInput = builder.get_object('name_input') as Adw.EntryRow;
         this.urlInput = builder.get_object('url_input') as Adw.EntryRow;
@@ -137,6 +136,6 @@ export class AddProjectDialog {
     }
 
     present() {
-        this.dialog.present();
+        this.dialog.present(this.parentWidget);
     }
 }

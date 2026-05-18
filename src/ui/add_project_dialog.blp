@@ -3,13 +3,12 @@ using Adw 1;
 
 translation-domain "org.respatch.hq";
 
-Adw.Window add_project_dialog {
+Adw.Dialog add_project_dialog {
     title: _("Add project");
-    default-width: 450;
-    default-height: 350;
-    modal: true;
+    content-width: 450;
+    content-height: 350;
 
-    Adw.ToastOverlay toast_overlay {
+    child: Adw.ToastOverlay toast_overlay {
         Adw.ToolbarView {
             [top]
         Adw.HeaderBar {
@@ -41,5 +40,5 @@ Adw.Window add_project_dialog {
             }
         };
     }
-    }
+    };
 }
