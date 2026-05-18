@@ -10,6 +10,7 @@ import { ProjectStore } from './stores/ProjectStore.js';
 import { ApiClient } from './services/ApiClient.js';
 import { LoggerService, ConsoleTransport, FileTransport, LogTransport } from './services/LoggerService.js';
 import { WindowManager } from './WindowManager.js';
+import { NotificationService } from './services/NotificationService.js';
 
 export const Application = GObject.registerClass({
     GTypeName: 'RespatchApplication',
@@ -20,6 +21,7 @@ export const Application = GObject.registerClass({
     private apiClient!: ApiClient;
     private logger!: LoggerService;
     private windowManager!: WindowManager;
+    private notificationService!: NotificationService;
 
     constructor() {
         super({
@@ -28,7 +30,9 @@ export const Application = GObject.registerClass({
         });
     }
 
-    vfunc_activate() {
+    vfunc_startup() {
+        super.vfunc_startup();
+
         const file = Gio.File.new_for_uri(import.meta.url);
         this.uiDir = file.get_parent()?.get_path() || '';
 
@@ -52,20 +56,63 @@ export const Application = GObject.registerClass({
         }
 
         this.logger = new LoggerService(transports, loggingEnabled);
-        this.logger.info('Application activated');
+        this.logger.info('Application started');
 
         this._loadStyle();
 
         this.apiClient = new ApiClient(gjsFetch);
         this.projectStore = new ProjectStore(this.settingsService);
+        this.notificationService = new NotificationService(this);
         this.windowManager = new WindowManager(
             this,
             this.uiDir,
             this.projectStore,
             this.apiClient,
             this.settingsService,
-            this.logger
+            this.logger,
+            this.notificationService
         );
+
+        // Register notification mute actions
+        const mute1hAction = new Gio.SimpleAction({ name: 'mute-1h' });
+        mute1hAction.connect('activate', () => {
+            this.logger.info('Muting notifications for 1 hour');
+            this.notificationService.mute(3600);
+        });
+        this.add_action(mute1hAction);
+
+        const mute1dAction = new Gio.SimpleAction({ name: 'mute-1d' });
+        mute1dAction.connect('activate', () => {
+            this.logger.info('Muting notifications for 1 day');
+            this.notificationService.mute(86400);
+        });
+        this.add_action(mute1dAction);
+
+        const muteOffAction = new Gio.SimpleAction({ name: 'mute-off' });
+        muteOffAction.connect('activate', () => {
+            this.logger.info('Turning off notifications');
+            this.notificationService.mute(-1);
+        });
+        this.add_action(muteOffAction);
+
+        // Action triggered when notification is clicked
+        const openMainAction = new Gio.SimpleAction({ name: 'open-main' });
+        openMainAction.connect('activate', () => {
+            this.logger.info('Opening main application from notification');
+            this.activate();
+        });
+        this.add_action(openMainAction);
+    }
+
+    vfunc_activate() {
+        super.vfunc_activate();
+        this.logger.info('Application activated');
+
+        const activeWindow = this.get_active_window();
+        if (activeWindow) {
+            activeWindow.present();
+            return;
+        }
 
         if (this.projectStore.hasActiveProject()) {
             this.windowManager.showMain();

@@ -88,14 +88,14 @@ describe('LoggerService', () => {
         const Gio = (await import('gi://Gio')).default;
         const mockFile = Gio.File.new_for_path('/tmp/test.log');
         expect(mockFile.append_to).toHaveBeenCalled();
-        expect(mockFile.append_to().write_all).toHaveBeenCalled();
+        expect((mockFile.append_to as any)().write_all).toHaveBeenCalled();
     });
 
     it('should fallback to console if file transport fails', async () => {
         const consoleErrorSpy = vi.spyOn(console, 'error');
         const Gio = (await import('gi://Gio')).default;
         const mockFile = Gio.File.new_for_path('');
-        mockFile.append_to.mockImplementation(() => {
+        (mockFile.append_to as any).mockImplementation(() => {
             throw new Error('Write failed');
         });
 

@@ -100,7 +100,7 @@ export class NotificationService {
             _('Transport "%s" contains a new failed message.').replace('%s', transport ?? id)
         );
         notification.set_priority(Gio.NotificationPriority.HIGH);
-        notification.set_default_action('app.activate');
+        notification.set_default_action('app.open-main');
 
         notification.add_button(_('Mute for 1 hour'), 'app.mute-1h');
         notification.add_button(_('Mute for 1 day'), 'app.mute-1d');
@@ -130,7 +130,7 @@ export class NotificationService {
                 .replace('%d', String(count))
         );
         notification.set_priority(Gio.NotificationPriority.URGENT);
-        notification.set_default_action('app.activate');
+        notification.set_default_action('app.open-main');
 
         notification.add_button(_('Mute for 1 hour'), 'app.mute-1h');
         notification.add_button(_('Mute for 1 day'), 'app.mute-1d');

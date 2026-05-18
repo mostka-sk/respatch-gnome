@@ -1,4 +1,5 @@
 import Gio from 'gi://Gio';
+import GioUnix from 'gi://GioUnix?version=2.0';
 import GLib from 'gi://GLib';
 import { _ } from './gettext.js';
 import { gjsFetch } from './libs/fetch.js';
@@ -76,6 +77,36 @@ function setupServices() {
         notificationService.mute(-1);
     });
     Daemon.add_action(muteOffAction);
+
+    const openMainAction = new Gio.SimpleAction({ name: 'open-main' });
+    openMainAction.connect('activate', () => {
+        logger.info('Opening main application from daemon notification');
+        try {
+            const appInfo = GioUnix.DesktopAppInfo.new('sk.mostka.Respatch.desktop');
+            if (appInfo) {
+                appInfo.launch([], null);
+                logger.info('Launched via DesktopAppInfo');
+            } else {
+                logger.warn('Desktop file not found. Falling back to DBus activation.');
+                const connection = Gio.bus_get_sync(Gio.BusType.SESSION, null);
+                connection.call_sync(
+                    'sk.mostka.Respatch',
+                    '/sk/mostka/Respatch',
+                    'org.freedesktop.Application',
+                    'Activate',
+                    new GLib.Variant('(a{sv})', [{}]),
+                    null,
+                    Gio.DBusCallFlags.NONE,
+                    -1,
+                    null
+                );
+                logger.info('Launched via DBus Activate');
+            }
+        } catch (e) {
+            logger.error(`Failed to open main app: ${e}`);
+        }
+    });
+    Daemon.add_action(openMainAction);
 
     loadConfig();
 

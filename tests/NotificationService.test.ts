@@ -9,11 +9,13 @@ class MockNotification {
     body = '';
     priority = 0;
     defaultAction = '';
+    buttons: { label: string; action: string }[] = [];
 
     set_title(t: string) { this.title = t; }
     set_body(b: string) { this.body = b; }
     set_priority(p: number) { this.priority = p; }
     set_default_action(a: string) { this.defaultAction = a; }
+    add_button(label: string, action: string) { this.buttons.push({ label, action }); }
 }
 
 const mockSendNotification = vi.fn();

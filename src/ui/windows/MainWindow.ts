@@ -40,7 +40,6 @@ export class MainWindow {
     private projects: Project[] = [];
 
     private readonly browserService: BrowserService;
-    private readonly notificationService: NotificationService;
     private readonly failedTransportsSection: PollingSection<FailedTransportItem, TransportsResponse>;
     private readonly transportSection: PollingSection<TransportItem, TransportsResponse>;
     private readonly recentMessagesSection: PollingSection<RecentMessage, RecentMessagesResponse>;
@@ -56,10 +55,10 @@ export class MainWindow {
         private readonly store: ProjectStore,
         private readonly apiClient: ApiClient,
         private readonly logger: LoggerService,
-        private readonly settingsService: SettingsService
+        private readonly settingsService: SettingsService,
+        private readonly notificationService: NotificationService
     ) {
         this.browserService = new BrowserService(settingsService, () => this.getActiveProject(), this.logger);
-        this.notificationService = new NotificationService(app);
         const builder = new Gtk.Builder();
         builder.add_from_file(`${uiDir}/ui/main.ui`);
 

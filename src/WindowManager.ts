@@ -9,6 +9,7 @@ import { ProjectStore } from './stores/ProjectStore.js';
 import { ApiClient } from './services/ApiClient.js';
 import { LoggerService } from './services/LoggerService.js';
 import { SettingsService } from './services/SettingsService.js';
+import { NotificationService } from './services/NotificationService.js';
 
 export class WindowManager {
     constructor(
@@ -17,7 +18,8 @@ export class WindowManager {
         private store: ProjectStore,
         private apiClient: ApiClient,
         private settingsService: SettingsService,
-        private logger: LoggerService
+        private logger: LoggerService,
+        private notificationService: NotificationService
     ) {}
 
     showWelcome() {
@@ -42,7 +44,8 @@ export class WindowManager {
             this.store,
             this.apiClient,
             this.logger,
-            this.settingsService
+            this.settingsService,
+            this.notificationService
         );
         main.present();
     }

@@ -219,3 +219,12 @@ msgstr "Vyskúšať Live Demo"
 
 msgid "Enter the plain text secret token here. The SHA-256 hash belongs to the server configuration."
 msgstr "Sem zadajte heslo (plain text). SHA-256 hash patrí do konfigurácie servera."
+
+msgid "Mute for 1 hour"
+msgstr "Stlmiť na 1 hodinu"
+
+msgid "Mute for 1 day"
+msgstr "Stlmiť na 1 deň"
+
+msgid "Turn off"
+msgstr "Vypnúť"
